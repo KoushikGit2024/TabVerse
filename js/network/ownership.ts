@@ -2,6 +2,8 @@ import { broadcast } from './broadcast';
 import { app } from '../core/app';
 import { Constants } from '../core/constants';
 import { events } from '../core/events';
+import { physics } from '../physics/physics';
+import { persistence } from '../storage/persistence';
 
 import { OwnerAnnounceMessage } from '../types/index';
 
@@ -56,9 +58,9 @@ class Ownership {
 
     private startElection(): void {
         if (this.electionTimer !== null) window.clearTimeout(this.electionTimer);
-        
-        const delay = Math.random() * 200 + 100; 
-        
+
+        const delay = Math.random() * 200 + 100;
+
         this.electionTimer = window.setTimeout(() => {
             if (!this.currentOwnerId) {
                 this.setOwner();
@@ -72,9 +74,24 @@ class Ownership {
             this.isOwner = true;
             this.currentOwnerId = broadcast.tabId;
             app.setRole(Constants.ROLES.OWNER);
-            
+
             this.announceOwnership();
             this.announceInterval = window.setInterval(() => this.announceOwnership(), 1000);
+
+            // If this tab has become the owner with an empty simulation (i.e. no
+            // peers were already running physics we inherited from), try to
+            // restore the last persisted snapshot so the world resumes where it
+            // was left off rather than starting empty.
+            if (physics.objects.length === 0) {
+                persistence.load().then(restored => {
+                    // Guard against a race: only apply if we're still the owner and
+                    // still have nothing (another spawn could have happened meanwhile).
+                    if (restored && this.isOwner && physics.objects.length === 0) {
+                        console.log(`[Ownership] Restored ${restored.length} object(s) from persisted snapshot.`);
+                        physics.loadState(restored);
+                    }
+                });
+            }
         }
     }
 

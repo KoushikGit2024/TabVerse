@@ -11,7 +11,7 @@ import { PhysicsBody } from '../physics/body';
  */
 class Sync {
     private lastSyncTime: number;
-    public stateBuffer: Array<{ timestamp: number; objects: SerializedPhysicsObject[] }>;
+    public stateBuffer: Array<{ timestamp: number; serverTime: number; objects: SerializedPhysicsObject[] }>;
 
     constructor() {
         this.lastSyncTime = 0;
@@ -23,17 +23,21 @@ class Sync {
             if (!ownership.isOwner) {
                 this.stateBuffer.push({
                     timestamp: performance.now(),
+                    serverTime: payload.serverTime,
                     objects: payload.objects
                 });
-                
-                if (this.stateBuffer.length > 5) {
+
+                // Keep a slightly larger buffer than before (was 5) since interpolation
+                // needs at least 2 recent frames to blend between; 8 gives headroom
+                // for occasional dropped/late packets without losing continuity.
+                if (this.stateBuffer.length > 8) {
                     this.stateBuffer.shift();
                 }
-                
+
                 events.emit(Constants.EVENTS.NET_STATE_UPDATE, this.stateBuffer);
             }
         });
-        
+
         broadcast.on<SpawnReqMessage>('spawn_req', (payload) => {
             if (ownership.isOwner) {
                 events.emit(Constants.EVENTS.NET_SPAWN_REQ, payload);
@@ -53,6 +57,18 @@ class Sync {
             events.emit(Constants.EVENTS.NET_PARTICLE_BURST, payload);
         });
         
+        broadcast.on<any>('game_state', (payload) => {
+            if (!ownership.isOwner) {
+                events.emit(Constants.EVENTS.NET_GAME_STATE, payload);
+            }
+        });
+
+        broadcast.on<any>('paddle_update', (payload, sender) => {
+            if (ownership.isOwner) {
+                events.emit(Constants.EVENTS.NET_PADDLE_UPDATE, { ...payload, sender });
+            }
+        });
+
         // The owner emits COLLISION locally. Broadcast it so all clients see particles.
         events.on(Constants.EVENTS.COLLISION, (data) => {
             if (ownership.isOwner) {
@@ -67,7 +83,7 @@ class Sync {
 
         const now = performance.now();
         if (now - this.lastSyncTime > (1000 / Config.network.syncRate)) {
-            
+
             const pack: SerializedPhysicsObject[] = objects.map(obj => {
                 const s: SerializedPhysicsObject = {
                     id: obj.id,
@@ -85,12 +101,12 @@ class Sync {
                 return s;
             });
 
-            broadcast.send<WorldStateMessage>('world_state', { objects: pack });
+            broadcast.send<WorldStateMessage>('world_state', { objects: pack, serverTime: now });
             this.lastSyncTime = now;
         }
     }
-    
-    public requestSpawn(type: number | 'CLEAR', x: number, y: number, extra?: number): void {
+
+    public requestSpawn(type: number | 'CLEAR' | 'ROPE' | 'START_GAME', x: number, y: number, extra?: number): void {
         const payload: SpawnReqPayload = { type, x, y };
         if (extra !== undefined) payload.extra = extra;
 
@@ -113,6 +129,21 @@ class Sync {
             else broadcast.send<any>('grab_end', null);
         }
     }
+
+    public broadcastGameState(status: 'MENU' | 'PLAYING' | 'GAMEOVER', score: number, paddleX: number): void {
+        if (ownership.isOwner) {
+            broadcast.send<any>('game_state', { status, score, paddleX });
+            events.emit(Constants.EVENTS.NET_GAME_STATE, { status, score, paddleX });
+        }
+    }
+
+    public sendPaddleMove(dir: number): void {
+        if (ownership.isOwner) {
+            events.emit(Constants.EVENTS.NET_PADDLE_UPDATE, { dir, sender: broadcast.tabId });
+        } else {
+            broadcast.send<any>('paddle_update', { dir });
+        }
+    }
 }
 
-export const sync = new Sync();
+export const sync = new Sync(); 
