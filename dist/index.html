@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TabVerse - Distributed Physics</title>
+    
+    <!-- CSS -->
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <script type="module" crossorigin src="/assets/index-BCybVPNX.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-BC0GeUJZ.css">
+</head>
+<body class="theme-dark">
+    <!-- Main Canvas -->
+    <canvas id="worldCanvas"></canvas>
+
+    <!-- UI Layer -->
+    <div id="ui-layer" class="glass-panel">
+        <header>
+            <h1>TabVerse</h1>
+            <div id="status-indicator" class="status-connecting">Connecting...</div>
+        </header>
+
+        <div class="hud">
+            <div class="stat-row"><span>Role:</span> <span id="stat-role">Client</span></div>
+            <div class="stat-row"><span>Tabs:</span> <span id="stat-tabs">1</span></div>
+            <div class="stat-row"><span>Objects:</span> <span id="stat-objects">0</span></div>
+            <div class="stat-row"><span>FPS:</span> <span id="stat-fps">0</span></div>
+        </div>
+
+        <div class="controls">
+            <h3>Controls</h3>
+            <p>Click & Drag to grab/toss objects</p>
+            <p>Right Click to delete</p>
+            <button id="btn-spawn-box" class="btn">Spawn Box</button>
+            <button id="btn-spawn-ball" class="btn">Spawn Ball</button>
+            <button id="btn-spawn-portal" class="btn" style="background: linear-gradient(45deg, #00f, #f90); color: white; border: none;">Spawn Portals</button>
+            <button id="btn-clear" class="btn btn-danger">Clear All</button>
+        </div>
+    </div>
+
+    <div class="settings-panel">
+        <h3>World Settings</h3>
+        <label>Gravity: <input type="range" id="setting-gravity" min="0" max="2000" value="980"></label>
+        <label>Bounce: <input type="range" id="setting-bounce" min="0" max="1" step="0.1" value="0.8"></label>
+        <label>Friction: <input type="range" id="setting-friction" min="0" max="10" step="0.1" value="1.5"></label>
+    </div>
+
+    <!-- Core -->
+</body>
+</html>

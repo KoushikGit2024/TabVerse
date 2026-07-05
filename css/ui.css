@@ -1,0 +1,145 @@
+/* UI Layer sits above the canvas */
+#ui-layer {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Glassmorphism utility */
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: var(--glass-shadow);
+}
+
+header h1 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+#status-indicator {
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 12px;
+    display: inline-block;
+}
+
+.status-connecting { color: #fbbf24; background: rgba(251, 191, 36, 0.1); }
+.status-owner { color: var(--accent-green); background: rgba(16, 185, 129, 0.1); }
+.status-client { color: var(--accent-blue); background: rgba(59, 130, 246, 0.1); }
+
+.hud {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.9rem;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    color: var(--text-secondary);
+}
+
+.stat-row span:last-child {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+}
+
+.controls h3 {
+    font-size: 1rem;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+}
+
+.controls p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.btn {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 8px;
+    border: none;
+    border-radius: 8px;
+    background: var(--accent-blue);
+    color: white;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    background: var(--accent-blue-hover);
+    transform: translateY(-1px);
+}
+
+.btn:active {
+    transform: translateY(1px);
+}
+
+.btn-danger {
+    background: var(--accent-red);
+    margin-top: 10px;
+}
+
+.btn-danger:hover {
+    background: var(--accent-red-hover);
+}
+
+.settings-panel {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 10;
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: var(--glass-shadow);
+    color: var(--text-primary);
+}
+
+.settings-panel h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+    margin-top: 0;
+}
+
+.settings-panel label {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.85rem;
+    font-weight: 500;
+    gap: 5px;
+}
+
+.settings-panel input[type="range"] {
+    width: 100%;
+    cursor: pointer;
+}
