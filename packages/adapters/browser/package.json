@@ -1,0 +1,22 @@
+{
+  "name": "@tabverse/browser-adapter",
+  "version": "1.0.0",
+  "description": "Browser adapters for TabVerse Engine",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@tabverse/engine": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "vitest": "^0.34.6"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

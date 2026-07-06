@@ -1,0 +1,18 @@
+{
+  "name": "@tabverse/engine",
+  "version": "0.1.0",
+  "main": "src/api/Engine.ts",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "vitest": "^1.0.0"
+  },
+  "exports": {
+    ".": "./src/api/index.ts",
+    "./api": "./src/api/index.ts",
+    "./core": "./src/core/index.ts",
+    "./runtime/SnapshotPlugin": "./src/runtime/SnapshotPlugin.ts"
+  }
+}
